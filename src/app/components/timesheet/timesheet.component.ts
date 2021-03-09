@@ -1,23 +1,64 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Department } from 'src/app/interfaces/department';
-import { DepartmentsService } from 'src/app/services/departments.service';
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import {Department} from "src/app/interfaces/department";
+import {Employee} from "src/app/interfaces/employee";
+import {DepartmentsService} from "src/app/services/departments.service";
+import {FormControl, ValidatorFn, AbstractControl} from "@angular/forms";
 
 @Component({
-   selector: 'app-timesheet',
-   templateUrl: './timesheet.component.html',
-   styleUrls: ['./timesheet.component.scss']
+	selector: "app-timesheet",
+	templateUrl: "./timesheet.component.html",
+	styleUrls: ["./timesheet.component.scss"],
 })
 export class TimesheetComponent implements OnInit {
-   departments: Department[] = [];
-   department: any;
+	departments: Department[] = [];
+	department: any;
+	employeeNameFC = new FormControl("", this.nameValidator());
+	employees: Employee[] = [];
+	employeeId: number = 0;
+   weekdays: string[] = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+   day: number = 0;
 
-   constructor(
-      private route: ActivatedRoute, private departmetsService: DepartmentsService
-   ) { }
+	constructor(private route: ActivatedRoute, private departmetsService: DepartmentsService) {}
 
-   ngOnInit(): void {
-      this.departments = this.departmetsService.departments;
-      this.department = this.departments.find(d => d.id === this.route.snapshot.params["id"]);
-   }
+	ngOnInit(): void {
+		this.departments = this.departmetsService.departments;
+		this.department = this.departments.find((d) => d.id === this.route.snapshot.params["id"]);
+	}
+
+	addEmployee(): void {
+		if (this.employeeNameFC.value) {
+			this.employeeId++;
+
+			this.employees.push({
+				id: this.employeeId.toString(),
+				departmentId: this.department.id,
+				name: this.employeeNameFC.value,
+				payRate: Math.floor(Math.random() * 50) + 50,
+				monday: 0,
+				tuesday: 0,
+				wednesday: 0,
+				thursday: 0,
+				friday: 0,
+				saturday: 0,
+				sunday: 0,
+			});
+
+			this.employeeNameFC.setValue("");
+		}
+	}
+
+	nameValidator(): ValidatorFn {
+		return (control: AbstractControl): {[key: string]: any} | null => {
+			let error = null;
+			if (this.employees && this.employees.length) {
+				this.employees.forEach((employee) => {
+					if (employee.name.toLowerCase() === control.value.toLowerCase()) {
+						error = {duplicate: true};
+					}
+				});
+			}
+			return error;
+		};
+	}
 }
