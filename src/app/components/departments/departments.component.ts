@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { Department } from 'src/app/interfaces/department';
 import { DepartmentsService } from 'src/app/services/departments.service';
 
@@ -11,6 +12,7 @@ import { DepartmentsService } from 'src/app/services/departments.service';
 export class DepartmentsComponent implements OnInit {
 
    departments: Department[] = [];
+   $departments: any;
 
    constructor(private departmentsService: DepartmentsService, private router: Router) {
      
@@ -20,6 +22,9 @@ export class DepartmentsComponent implements OnInit {
       this.router.navigate(["./timesheet", { id: departmentId }]);
    }
    ngOnInit(): void {
-      this.departments = this.departmentsService.departments;
+      // this.departmentsService.getDepartments().subscribe((departments) => {
+      //    this.departments = departments;
+      // });
+      this.$departments = this.departmentsService.getDepartments();
   }
 }
