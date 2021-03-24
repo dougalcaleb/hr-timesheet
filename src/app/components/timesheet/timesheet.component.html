@@ -30,13 +30,14 @@
 						</td>
 						<td class="total-cell">{{ getTotalHours(employee) }}</td>
 						<td>
-							<button mat-icon-button (click)="deleteEmployee(i)">
+							<button mat-icon-button (click)="deleteEmployee(employee, i)">
 								<mat-icon>delete</mat-icon>
 							</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
+         <button mat-raised-button color="primary" class="submit" (click)="submit()">Submit</button>
 		</mat-card>
 	</div>
 </div>
